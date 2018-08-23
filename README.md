@@ -1,1 +1,1 @@
-# Stock-Scraper
+# Exchange-Rate-Notifier
