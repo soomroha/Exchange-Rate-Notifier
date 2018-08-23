@@ -1,7 +1,12 @@
+
+from subprocess import call
+
+call(["python", "-m", "pip", "install", "requests"])
+call(["python", "-m", "pip", "install", "bs4"])
+
 from tkinter import *
 from tkinter import ttk, messagebox
 import requests
-import time
 from bs4 import BeautifulSoup
 
 watchList = {}
@@ -64,6 +69,10 @@ def checkNotifier():
     root.after(1500, checkNotifier)
     
 if __name__ == "__main__":
+
+
+
+
 
     root = Tk()
     root.title("blah")
