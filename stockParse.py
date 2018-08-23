@@ -1,8 +1,10 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import requests
 import time
 from bs4 import BeautifulSoup
+
+watchList = {}
 
 def get_data():
     page = requests.get("http://webrates.truefx.com/rates/connect.html?f=html")
@@ -18,59 +20,79 @@ def get_data():
 
     return currData
 
-
-watchList = {}
 def onClick():
 
-    pairing = radio.get()
+    pairing = int(radio.get())
 
-    if (pairing == 1):
+    try:
+        price = float(watchPrice.get())
 
-    else if (pairing == 2):
+        if (pairing == 1):
+            watchList['EUR/USD'] = price
+        elif (pairing == 2):
+            watchList['USD/JPY'] = price
+        elif (pairing == 3):
+            watchList['GBP/USD'] = price
+        elif (pairing == 4):
+            watchList['EUR/GBP'] = price
+        elif (pairing == 5):
+            watchList['USD/CHF'] = price
+        elif (pairing == 6):
+            watchList['EUR/JPY'] = price
+        elif (pairing == 7):
+            watchList['EUR/CAD'] = price
+        elif (pairing == 8):
+            watchList['USD/CAD'] = price
+        elif (pairing == 9):
+            watchList['AUD/USD'] = price
+        elif (pairing == 10):
+            watchList['GBP/JPY'] = price
+    except:
+        messagebox.showinfo("Error", "please enter a valid price")
 
-    else if (pairing == 3):
+def checkNotifier():
 
-    else if (pairing == 4):
+    data = get_data()
 
-    else if (pairing == 5):
+    for pair in watchList:
+        if data[pair] == watchList[pair]:
+            del watchList[pair]
+            message = "Your alert for "+pair+" has triggered"
+            messagebox.showinfo("Price alert", message)
+            break
 
-    else if (pairing == 6):
-
-    else if (pairing == 7):
-
-    else if (pairing == 8):
-
-    else if (pairing == 9):
-
-    else if (pairing == 10):
+    root.after(1500, checkNotifier)
     
-root = Tk()
-root.title("blah")
+if __name__ == "__main__":
 
-mainframe = ttk.Frame(root, padding="3 3 12 12")
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-mainframe.columnconfigure(0, weight=1)
-mainframe.rowconfigure(0, weight=1)
+    root = Tk()
+    root.title("blah")
 
-radio = StringVar()
-EU = Radiobutton(mainframe, text = "EUR/USD", value = 1, variable = radio).pack()
-UJ = Radiobutton(mainframe, text = "USD/JPY  ", value = 2, variable = radio).pack()
-GU = Radiobutton(mainframe, text = "GBP/USD", value = 3, variable = radio).pack()
-EG = Radiobutton(mainframe, text = "EUR/GBP", value = 4, variable = radio).pack()
-UF = Radiobutton(mainframe, text = "USD/CHF", value = 5, variable = radio).pack()
-EJ = Radiobutton(mainframe, text = "EUR/JPY  ", value = 6, variable = radio).pack()
-EC = Radiobutton(mainframe, text = "EUR/CAD", value = 7, variable = radio).pack()
-UC = Radiobutton(mainframe, text = "USD/CAD", value = 8, variable = radio).pack()
-AU = Radiobutton(mainframe, text = "AUD/USD", value = 9, variable = radio).pack()
-GJ = Radiobutton(mainframe, text = "GBP/JPY  ", value = 10, variable = radio).pack()
+    mainframe = ttk.Frame(root, padding="3 3 12 12")
+    mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+    mainframe.columnconfigure(0, weight=1)
+    mainframe.rowconfigure(0, weight=1)
 
-watchPrice = Entry(root)
-watchPrice.grid(row=11, column=0)
+    radio = StringVar()
+    
+    EU = Radiobutton(mainframe, text = "EUR/USD", value = 1, variable = radio).pack()
+    UJ = Radiobutton(mainframe, text = "USD/JPY  ", value = 2, variable = radio).pack()
+    GU = Radiobutton(mainframe, text = "GBP/USD", value = 3, variable = radio).pack()
+    EG = Radiobutton(mainframe, text = "EUR/GBP", value = 4, variable = radio).pack()
+    UF = Radiobutton(mainframe, text = "USD/CHF", value = 5, variable = radio).pack()
+    EJ = Radiobutton(mainframe, text = "EUR/JPY  ", value = 6, variable = radio).pack()
+    EC = Radiobutton(mainframe, text = "EUR/CAD", value = 7, variable = radio).pack()
+    UC = Radiobutton(mainframe, text = "USD/CAD", value = 8, variable = radio).pack()
+    AU = Radiobutton(mainframe, text = "AUD/USD", value = 9, variable = radio).pack()
+    GJ = Radiobutton(mainframe, text = "GBP/JPY  ", value = 10, variable = radio).pack()
 
-addButton = Button(text = "Set", command = onClick).grid(row=12, column=0)
+    watchPrice = Entry(root)
+    watchPrice.grid(row=11, column=0)
 
-
-root.mainloop()
+    addButton = Button(text = "Set", command = onClick).grid(row=12, column=0)
+    root.protocol("WM_DELETE_WINDOW", sys.exit)
+    root.after(1500, checkNotifier)
+    root.mainloop()
 
 
 
